@@ -4,6 +4,13 @@ using UnityEngine;
 
 public class PlayerCtrl : MonoBehaviour
 {
+    private int coin = 35;
+    public int Coin
+    {
+        get => coin;
+        set => coin = value;
+    }
+
     //캐릭터 직선 이동 속도 (걷기)
     public float walkMoveSpd = 2.0f;
 
@@ -83,9 +90,6 @@ public class PlayerCtrl : MonoBehaviour
     public GameObject skillEffect = null;
 
 
-
-
-    // Start is called before the first frame update
     void Start()
     {
         //CharacterController 캐싱
@@ -120,7 +124,6 @@ public class PlayerCtrl : MonoBehaviour
         SetAnimationEvent(skillAnimClip, "OnSkillAnimFinished");
     }
 
-    // Update is called once per frame
     void Update()
     {
         //캐릭터 이동 
@@ -143,6 +146,8 @@ public class PlayerCtrl : MonoBehaviour
 
         //공격관련 컴포넌트 제어
         AtkComponentCtrl();
+
+        CheckBox();
     }
 
     /// <summary>
@@ -440,10 +445,6 @@ public class PlayerCtrl : MonoBehaviour
         playerState = PlayerState.Idle;
     }
 
-
-
-
-
     /// <summary>
     ///  공격 애니매이션 재생이 끝나면 호출되는 애니매이션 이벤트 함수
     /// </summary>
@@ -562,6 +563,44 @@ public class PlayerCtrl : MonoBehaviour
                 break;
         }
     }
+    
+    /// <summary>
+    /// 플레이어의 범위내에 박스가 있을때 돈이 있을때 열게 하는 함수
+    /// </summary>
+    void CheckBox()
+    {
+        Collider[] cols = Physics.OverlapSphere(transform.position, 2.2f);
+        if (cols.Length != 0)
+        {
+            foreach(var col in cols)
+            {
+                if(col.CompareTag("Box"))
+                {
+                    if(coin >= 35)
+                    {
+                        if (Input.GetKey(KeyCode.F))
+                        {
+                            BoxOpen(col.transform);
+                        }
+                    }
+                }
+            }
+        }
+    }
 
+    //private void OnDrawGizmos()
+    //{
+    //    Gizmos.color = Color.red;
+    //    Gizmos.DrawWireSphere(transform.position, 3f);
+    //}
+
+    /// <summary>
+    /// 박스가 오픈되었을 때 박스에게 Open함수를 실행시키게 한다.
+    /// </summary>
+    /// <param name="box">박스</param>
+    void BoxOpen(Transform box)
+    {
+        box.SendMessage("Open", SendMessageOptions.RequireReceiver);
+    }
 
 }

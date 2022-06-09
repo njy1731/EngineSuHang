@@ -42,6 +42,8 @@ public class EnemyCtrl : MonoBehaviour
     //해골 다이 이펙트
     public GameObject effectDie = null;
     public GameObject effectDamage = null;
+    private int enemyCoin = 5;
+    
 
     //private Tweener effectTweener = null;
     //private SkinnedMeshRenderer skinnedMeshRenderer = null;
@@ -346,6 +348,7 @@ public class EnemyCtrl : MonoBehaviour
         //만약에 해골이 캐릭터 공격에 맞았다면
         if (other.gameObject.CompareTag("PlayerAtk") == true)
         {
+            PlayerCtrl player = GetComponent<PlayerCtrl>();
             //해골 체력을 10 빼고 
             Debug.Log("Hit");
             hp -= 10;
@@ -362,7 +365,8 @@ public class EnemyCtrl : MonoBehaviour
             }
             else
             {
-                //0 보다 작으면 해골이 죽음 상태로 바꾸어라  
+                //0 보다 작으면 해골이 죽음 상태로 바꾸어라
+                player.Coin += enemyCoin;
                 enemyState = EnemyState.Die;
                 Debug.Log("Die");
                 Destroy(gameObject);
