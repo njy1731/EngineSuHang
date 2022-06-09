@@ -40,6 +40,7 @@ public class PlayerCtrl : MonoBehaviour
     //캐릭터 멈춤 변수 플래그
     private bool stopMove = false;
 
+
     [Header("애니메이션 속성")]
     public AnimationClip animationClipIdle = null;
     public AnimationClip animationClipWalk = null;
@@ -48,8 +49,6 @@ public class PlayerCtrl : MonoBehaviour
     public AnimationClip animationClipAtkStep_2 = null;
     public AnimationClip animationClipAtkStep_3 = null;
     public AnimationClip animationClipAtkStep_4 = null;
-
-
 
     //컴포넌트도 필요합니다 
     private Animation animationPlayer = null;
@@ -67,17 +66,26 @@ public class PlayerCtrl : MonoBehaviour
     //기본 공격 상태 값 추가 
     public PlayerAttackState playerAttackState = PlayerAttackState.atkStep_1;
 
-    //다음 연계 공격 활성화를 위한 flag
+    //다음 연걔 공격 활성화를 위한 flag
     public bool flagNextAttack = false;
 
+
     [Header("전투관련")]
+    //공격할 때만 켜지게
     public TrailRenderer AtkTrailRenderer = null;
+
+    //무기에 있는 콜라이더 캐싱
     public CapsuleCollider AtkCapsuleCollider = null;
+
 
     [Header("스킬관련")]
     public AnimationClip skillAnimClip = null;
     public GameObject skillEffect = null;
 
+
+
+
+    // Start is called before the first frame update
     void Start()
     {
         //CharacterController 캐싱
@@ -96,12 +104,11 @@ public class PlayerCtrl : MonoBehaviour
         //animation WrapMode : 재생 모드 설정 
         animationPlayer[animationClipIdle.name].wrapMode = WrapMode.Loop;
         animationPlayer[animationClipWalk.name].wrapMode = WrapMode.Loop;
-        animationPlayer[animationClipWalk.name].wrapMode = WrapMode.Loop;
+        animationPlayer[animationClipRun.name].wrapMode = WrapMode.Loop;
         animationPlayer[animationClipAtkStep_1.name].wrapMode = WrapMode.Once;
         animationPlayer[animationClipAtkStep_2.name].wrapMode = WrapMode.Once;
         animationPlayer[animationClipAtkStep_3.name].wrapMode = WrapMode.Once;
         animationPlayer[animationClipAtkStep_4.name].wrapMode = WrapMode.Once;
-
         animationPlayer[skillAnimClip.name].wrapMode = WrapMode.Once;
 
         //이벤트 함수 지정 
@@ -110,8 +117,7 @@ public class PlayerCtrl : MonoBehaviour
         SetAnimationEvent(animationClipAtkStep_3, "OnPlayerAttackFinshed");
         SetAnimationEvent(animationClipAtkStep_4, "OnPlayerAttackFinshed");
 
-        SetAnimationEvent(skillAnimClip, "OnskillAnimFinished");
-
+        SetAnimationEvent(skillAnimClip, "OnSkillAnimFinished");
     }
 
     // Update is called once per frame
@@ -126,7 +132,7 @@ public class PlayerCtrl : MonoBehaviour
         //현재 상태에 맞추어서 애니메이션을 재생시켜줍니다
         AnimationClipCtrl();
 
-        //플레이어 상태 조건에 맞추어 애니메이션 재생
+        //플레이어 상태 조건에 맞추어 애니메이션 재생 
         ckAnimationState();
 
         //왼쪽 마우스 클릭으로 공격 연속공격
@@ -134,6 +140,9 @@ public class PlayerCtrl : MonoBehaviour
 
         //중력 적용
         setGravity();
+
+        //공격관련 컴포넌트 제어
+        AtkComponentCtrl();
     }
 
     /// <summary>
@@ -145,6 +154,7 @@ public class PlayerCtrl : MonoBehaviour
         {
             return;
         }
+
         Transform CameraTransform = Camera.main.transform;
         //메인 카메라가 바라보는 방향이 월드상에 어떤 방향인가.
         Vector3 forward = CameraTransform.TransformDirection(Vector3.forward);
@@ -177,11 +187,12 @@ public class PlayerCtrl : MonoBehaviour
             spd = walkMoveSpd;
         }
 
-        //중력이동 
-        Vector3 _vecTemp = new Vector3(0f, verticalSpd, 0f);
+        //중력 백터
+        Vector3 vecGravity = new Vector3(0f, verticalSpd, 0f);
+
 
         // 프레임 이동 양
-        Vector3 moveAmount = (vecMoveDirection * spd * Time.deltaTime) + _vecTemp;
+        Vector3 moveAmount = (vecMoveDirection * spd * Time.deltaTime) + vecGravity;
 
         collisionFlagsCharacter = controllerCharacter.Move(moveAmount);
 
@@ -251,6 +262,7 @@ public class PlayerCtrl : MonoBehaviour
 
             //내 캐릭터 전면 설정 
             transform.forward = Vector3.Lerp(transform.forward, newForward, rotateBodySpd * Time.deltaTime);
+
         }
     }
 
@@ -290,6 +302,7 @@ public class PlayerCtrl : MonoBehaviour
                 AtkAnimationCrtl();
                 break;
             case PlayerState.Skill:
+                playAnimationByClip(skillAnimClip);
                 stopMove = true;
                 break;
         }
@@ -349,7 +362,6 @@ public class PlayerCtrl : MonoBehaviour
         //마우스 클릭을 하였느냐?
         if (Input.GetMouseButton(0) == true)
         {
-            Debug.Log("InputAttackCtrll : " + playerState);
             //플레이어가 공격상태?
             if (playerState != PlayerState.Attack)
             {
@@ -366,13 +378,13 @@ public class PlayerCtrl : MonoBehaviour
                 switch (playerAttackState)
                 {
                     case PlayerAttackState.atkStep_1:
-                        if (animationPlayer[animationClipAtkStep_1.name].normalizedTime > 0.01f)
+                        if (animationPlayer[animationClipAtkStep_1.name].normalizedTime > 0.5f)
                         {
                             flagNextAttack = true;
                         }
                         break;
                     case PlayerAttackState.atkStep_2:
-                        if (animationPlayer[animationClipAtkStep_2.name].normalizedTime > 0.05f)
+                        if (animationPlayer[animationClipAtkStep_2.name].normalizedTime > 0.5f)
                         {
                             flagNextAttack = true;
                         }
@@ -395,24 +407,42 @@ public class PlayerCtrl : MonoBehaviour
             }
         }
 
-        if (Input.GetMouseButton(1) == true)
+        //마우스 오른쪽 버튼을 눌렀다면
+        if (Input.GetMouseButtonDown(1) == true)
         {
+            //만약 캐릭터 상태가 공격중이면
+            if (playerState == PlayerState.Attack)
+            {
+                //공격상태을 1 기본 상태로
+                playerAttackState = PlayerAttackState.atkStep_1;
+                flagNextAttack = false;
+            }
 
+            //플레이어 상태를 스킬 상태로 변경 한다
+            playerState = PlayerState.Skill;
         }
     }
 
-    //스킬 애니메이션 재생이 끝났을 때 이벤트
-    void OnskillAnimFinished()
+
+    //스킬 애니메이션 재생이 끝났을 때 이벤트 
+    void OnSkillAnimFinished()
     {
         //현재 캐릭터 위치 저장
         Vector3 pos = transform.position;
-        //캐릭터 앞 방향 2.0정도 떨어진 거리
+
+        //캐릭터 앞 방향 2.0정도 떨어진 거리 
         pos += transform.forward * 2f;
-        //그 위치에 스킬 이펙트를 붙인다.
+
+        //그 위치에 스킬 이펙트를 붙인다. 
         Instantiate(skillEffect, pos, Quaternion.identity);
-        //끝났으면 대기 상태로
+
+        //끝났으면 대기 상태로 둔다. 
         playerState = PlayerState.Idle;
     }
+
+
+
+
 
     /// <summary>
     ///  공격 애니매이션 재생이 끝나면 호출되는 애니매이션 이벤트 함수
@@ -433,6 +463,8 @@ public class PlayerCtrl : MonoBehaviour
 
                 case PlayerAttackState.atkStep_1:
                     playerAttackState = PlayerAttackState.atkStep_2;
+
+                    Debug.Log(playerAttackState);
                     break;
                 case PlayerAttackState.atkStep_2:
                     playerAttackState = PlayerAttackState.atkStep_3;
@@ -447,15 +479,11 @@ public class PlayerCtrl : MonoBehaviour
         }
         else
         {
-            //공격중이 아닐때 
 
-            //캐릭터는 이동 가능 상태로 변경한다
             stopMove = false;
 
-            //캐릭터는 대기상태
             playerState = PlayerState.Idle;
 
-            //공격모드는 1
             playerAttackState = PlayerAttackState.atkStep_1;
         }
     }
@@ -515,4 +543,25 @@ public class PlayerCtrl : MonoBehaviour
             verticalSpd -= gravity * Time.deltaTime;
         }
     }
+
+    /// <summary>
+    /// 공격관련 컴포넌트 제어
+    /// </summary>
+    void AtkComponentCtrl()
+    {
+        switch (playerState)
+        {
+            case PlayerState.Attack:
+            case PlayerState.Skill:
+                AtkTrailRenderer.enabled = true;
+                AtkCapsuleCollider.enabled = true;
+                break;
+            default:
+                AtkTrailRenderer.enabled = false;
+                AtkCapsuleCollider.enabled = false;
+                break;
+        }
+    }
+
+
 }
