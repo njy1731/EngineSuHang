@@ -9,6 +9,7 @@ TagManager:
   - PlayerAtk
   - Enemy
   - Box
+  - EnemyAtk
   layers:
   - Default
   - TransparentFX
@@ -17,7 +18,7 @@ TagManager:
   - Water
   - UI
   - ball
-  - 
+  - Box
   - 
   - 
   - 

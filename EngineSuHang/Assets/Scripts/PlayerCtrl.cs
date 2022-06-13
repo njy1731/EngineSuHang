@@ -1,10 +1,34 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerCtrl : MonoBehaviour
 {
-    private int coin = 35;
+    [SerializeField]
+    private LayerMask layer;
+
+    //상자에 가까이 가면 뜨게함.
+    [SerializeField]
+    private Text BoxOpenText = null;
+
+    //Player Hp
+    private int HP = 100;
+
+    //Player 공격력 = 힘
+    private float strength = 1.0f;
+
+    //프로퍼티로 Enemy에서 받기 위함
+    public float STRENGTH
+    {
+        get => strength;
+        set => strength = value;
+    }
+
+    //Player Coin
+    private int coin = 34;
+
+    //프로퍼티로 Enemy에서 받기 위함
     public int Coin
     {
         get => coin;
@@ -62,7 +86,7 @@ public class PlayerCtrl : MonoBehaviour
 
 
     //캐릭터 상태  캐릭터 상태에 따라 animation을 표현
-    public enum PlayerState { None, Idle, Walk, Run, Attack, Skill }
+    public enum PlayerState { None, Idle, Walk, Run, Attack, Hit, Die, Skill }
 
     [Header("캐릭터상태")]
     public PlayerState playerState = PlayerState.None;
@@ -236,11 +260,18 @@ public class PlayerCtrl : MonoBehaviour
 	/// </summary>
     private void OnGUI()
     {
+        var labelStyle = new GUIStyle();
+
+        labelStyle.fontSize = 35;
+
+        labelStyle.normal.textColor = Color.white;
+
+        GUILayout.Label("HP : " + HP.ToString(), labelStyle);
+
+        GUILayout.Label("STRENGTH : " + strength.ToString(), labelStyle);
+
         if (controllerCharacter != null && controllerCharacter.velocity != Vector3.zero)
         {
-            var labelStyle = new GUIStyle();
-            labelStyle.fontSize = 50;
-            labelStyle.normal.textColor = Color.white;
             //캐릭터 현재 속도
             float _getVelocitySpd = getNowVelocityVal();
             GUILayout.Label("현재속도 : " + _getVelocitySpd.ToString(), labelStyle);
@@ -569,21 +600,65 @@ public class PlayerCtrl : MonoBehaviour
     /// </summary>
     void CheckBox()
     {
-        Collider[] cols = Physics.OverlapSphere(transform.position, 2.2f);
-        if (cols.Length != 0)
+        RaycastHit raycast;
+        if (Physics.Raycast(transform.position, transform.forward, out raycast, 5f, layer))
         {
-            foreach(var col in cols)
+            BoxOpenText.gameObject.SetActive(true);
+            if (coin >= 35)
             {
-                if(col.CompareTag("Box"))
+                if (Input.GetKey(KeyCode.F))
                 {
-                    if(coin >= 35)
-                    {
-                        if (Input.GetKey(KeyCode.F))
-                        {
-                            BoxOpen(col.transform);
-                        }
-                    }
+                    BoxOpen(raycast.transform);
                 }
+            }
+        }
+        else
+        {
+            BoxOpenText.gameObject.SetActive(false);
+        }
+        //Collider[] cols = Physics.OverlapSphere(transform.position, 2.2f);
+        //if (cols.Length != 0)
+        //{
+        //    foreach(var col in cols)
+        //    {
+        //        if(col.CompareTag("Box"))
+        //        {
+        //            BoxOpenText.gameObject.SetActive(true);
+        //            if(coin >= 35)
+        //            {
+        //                if (Input.GetKey(KeyCode.F))
+        //                {
+        //                    BoxOpen(col.transform);
+        //                }
+        //            }
+        //        }
+        //        else
+        //        {
+        //            BoxOpenText.gameObject.SetActive(false);
+        //        }
+        //    }
+        //}
+    }
+
+    /// <summary>
+    /// 플레이어 피격 충돌 검출 
+    /// </summary>
+    /// <param name="other"></param>
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.gameObject.CompareTag("EnemyAtk") == true)
+        {
+            HP -= 5;
+            if(HP > 0)
+            {
+                //playerState = PlayerState.Hit;
+                Debug.Log(HP);
+            }
+            else
+            {
+                Debug.Log("Die");
+                Destroy(gameObject);
+                ///playerState = PlayerState.Die;
             }
         }
     }
