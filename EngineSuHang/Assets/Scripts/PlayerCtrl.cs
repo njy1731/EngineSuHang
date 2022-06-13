@@ -12,8 +12,14 @@ public class PlayerCtrl : MonoBehaviour
     [SerializeField]
     private Text BoxOpenText = null;
 
-    //Player Hp
-    private int HP = 100;
+    private int hp = 100;
+
+    //Player HP
+    public int HP
+    {
+        get => hp;
+        set => hp = value;
+    }
 
     //Player 공격력 = 힘
     private float strength = 1.0f;
@@ -26,7 +32,7 @@ public class PlayerCtrl : MonoBehaviour
     }
 
     //Player Coin
-    private int coin = 34;
+    private int coin = 35;
 
     //프로퍼티로 Enemy에서 받기 위함
     public int Coin
@@ -35,7 +41,14 @@ public class PlayerCtrl : MonoBehaviour
         set => coin = value;
     }
 
+
     //캐릭터 직선 이동 속도 (걷기)
+    private float speed = 0;
+    public float SPEED
+    {
+        get => speed;
+        set => speed = value;
+    }
     public float walkMoveSpd = 2.0f;
 
     //캐릭터 직선 이동 속도 (달리기)
@@ -215,6 +228,8 @@ public class PlayerCtrl : MonoBehaviour
         {
             spd = walkMoveSpd;
         }
+
+        spd += speed;
 
         //중력 백터
         Vector3 vecGravity = new Vector3(0f, verticalSpd, 0f);
@@ -606,7 +621,7 @@ public class PlayerCtrl : MonoBehaviour
             BoxOpenText.gameObject.SetActive(true);
             if (coin >= 35)
             {
-                if (Input.GetKey(KeyCode.F))
+                if (Input.GetKeyDown(KeyCode.F))
                 {
                     BoxOpen(raycast.transform);
                 }
@@ -677,5 +692,4 @@ public class PlayerCtrl : MonoBehaviour
     {
         box.SendMessage("Open", SendMessageOptions.RequireReceiver);
     }
-
 }

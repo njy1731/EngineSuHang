@@ -36,7 +36,7 @@ public class EnemyCtrl : MonoBehaviour
     [Header("전투속성")]
     //해골 체력
     [SerializeField]
-    private int HP = 100;
+    private int hp = 100;
     //해골 공격 거리
     public float AtkRange = 1.5f;
     //해골 다이 이펙트
@@ -351,8 +351,8 @@ public class EnemyCtrl : MonoBehaviour
             PlayerCtrl player = GetComponent<PlayerCtrl>();
             //해골 체력을 10 빼고 
             Debug.Log("Hit");
-            HP -= 10 * (int)player.STRENGTH;
-            if (HP >= 0)
+            hp -= 10 * (int)player.STRENGTH;
+            if (hp >= 0)
             {
                 //피격 이펙트 
                 Instantiate(effectDamage, other.transform.position, Quaternion.identity);
