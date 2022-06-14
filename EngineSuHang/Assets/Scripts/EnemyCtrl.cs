@@ -30,18 +30,22 @@ public class EnemyCtrl : MonoBehaviour
     public AnimationClip IdleAnimClip = null;
     public AnimationClip MoveAnimClip = null;
     public AnimationClip AtkAnimClip = null;
+
+    private PlayerCtrl player;
     //public AnimationClip DamageAnimClip = null;
     //public AnimationClip DieAnimClip = null;
 
     [Header("전투속성")]
     //해골 체력
     [SerializeField]
-    private int hp = 100;
+    private int hp = 150;
     //해골 공격 거리
     public float AtkRange = 1.5f;
     //해골 다이 이펙트
     public GameObject effectDie = null;
     public GameObject effectDamage = null;
+
+    [SerializeField]
     private int enemyCoin = 5;
     
 
@@ -87,10 +91,10 @@ public class EnemyCtrl : MonoBehaviour
         clip.AddEvent(retEvent);
     }
 
-
-    // Start is called before the first frame update
     void Start()
     {
+        
+
         //처음 상태 대기상태
         enemyState = EnemyState.Idle;
 
@@ -141,7 +145,6 @@ public class EnemyCtrl : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
     void Update()
     {
         CkState();
@@ -309,7 +312,6 @@ public class EnemyCtrl : MonoBehaviour
     ///시야 범위 안에 다른 Trigger 또는 캐릭터가 들어오면 호출 된다.
     ///함수 동작은 목표물이 들어오면 목표물을 설정하고 해골을 타겟 위치로 이동 시킨다 
     ///</summary>
-
     void OnCkTarget(GameObject target)
     {
         //목표 캐릭터에 파라메터로 검출된 오브젝트를 넣고 
@@ -347,11 +349,11 @@ public class EnemyCtrl : MonoBehaviour
     {
         //만약에 해골이 캐릭터 공격에 맞았다면
         if (other.gameObject.CompareTag("PlayerAtk") == true)
-        {
-            PlayerCtrl player = GetComponent<PlayerCtrl>();
-            //해골 체력을 10 빼고 
-            Debug.Log("Hit");
-            hp -= 10 * (int)player.STRENGTH;
+        { 
+            PlayerCtrl player = targetCharactor.GetComponent<PlayerCtrl>();
+
+            //해골 체력을 10 빼고
+            hp -= 10 + (int)player.STRENGTH;
             if (hp >= 0)
             {
                 //피격 이펙트 
@@ -366,9 +368,8 @@ public class EnemyCtrl : MonoBehaviour
             else
             {
                 //0 보다 작으면 해골이 죽음 상태로 바꾸어라
-                player.Coin += enemyCoin;
                 enemyState = EnemyState.Die;
-                Debug.Log("Die");
+                player.Coin += enemyCoin;
                 Destroy(gameObject);
             }
         }

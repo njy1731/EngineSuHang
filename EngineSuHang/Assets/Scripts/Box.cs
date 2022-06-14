@@ -8,6 +8,7 @@ public class Box : MonoBehaviour
 {
     private PlayerCtrl player;
     //[ContextMenu("Open")]
+    private int BoxCost = 25;
     private int HpPotion = 15;
     private float DumbBell = 2;
     private float RunningShoes = 0.5f;
@@ -44,6 +45,7 @@ public class Box : MonoBehaviour
 
     public void Open()
     {
+        player.Coin -= BoxCost;
         GetItem();
         Debug.Log("Get Item!");
         GetComponent<Animator>().Play("BoxClip");

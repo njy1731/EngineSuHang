@@ -5,16 +5,27 @@ using UnityEngine.UI;
 
 public class PlayerCtrl : MonoBehaviour
 {
+    //상자만 열게 하기 위해서 layerMask
     [SerializeField]
     private LayerMask layer;
 
     //상자에 가까이 가면 뜨게함.
+    [Header("텍스트")]
     [SerializeField]
     private Text BoxOpenText = null;
+    [SerializeField]
+    private Text HpText = null;
+    [SerializeField]
+    private Text StrengthText = null;
+    [SerializeField]
+    private Text CoinText = null;
+    [SerializeField]
+    private Text SpeedText = null;
 
+    //Player HP = 체력
     private int hp = 100;
 
-    //Player HP
+    //프로퍼티로 Enemy에서 받기 위함
     public int HP
     {
         get => hp;
@@ -31,8 +42,8 @@ public class PlayerCtrl : MonoBehaviour
         set => strength = value;
     }
 
-    //Player Coin
-    private int coin = 35;
+    //Player Coin = 재화
+    private int coin = 25;
 
     //프로퍼티로 Enemy에서 받기 위함
     public int Coin
@@ -43,7 +54,7 @@ public class PlayerCtrl : MonoBehaviour
 
 
     //캐릭터 직선 이동 속도 (걷기)
-    private float speed = 0;
+    private float speed = 2.0f;
     public float SPEED
     {
         get => speed;
@@ -54,7 +65,7 @@ public class PlayerCtrl : MonoBehaviour
     //캐릭터 직선 이동 속도 (달리기)
     public float runMoveSpd = 3.5f;
 
-    //캐릭터 회전 이동 속도 
+    //캐릭터 회전 이동 속도
     public float rotateMoveSpd = 100.0f;
 
     //캐릭터 회전 방향으로 몸을 돌리는 속도
@@ -99,7 +110,7 @@ public class PlayerCtrl : MonoBehaviour
 
 
     //캐릭터 상태  캐릭터 상태에 따라 animation을 표현
-    public enum PlayerState { None, Idle, Walk, Run, Attack, Hit, Die, Skill }
+    public enum PlayerState { None, Idle, Walk, Run, Attack, Skill }
 
     [Header("캐릭터상태")]
     public PlayerState playerState = PlayerState.None;
@@ -129,6 +140,7 @@ public class PlayerCtrl : MonoBehaviour
 
     void Start()
     {
+
         //CharacterController 캐싱
         controllerCharacter = GetComponent<CharacterController>();
 
@@ -163,6 +175,11 @@ public class PlayerCtrl : MonoBehaviour
 
     void Update()
     {
+        HpText.text = string.Format("HP : {0:N0}", hp);
+        StrengthText.text = string.Format("Strength : {0:N0}", strength);
+        CoinText.text = string.Format("Coin : {0:N0}", coin);
+        SpeedText.text = string.Format("Speed : {0}", speed);
+
         //캐릭터 이동 
         Move();
         // Debug.Log(getNowVelocityVal());
@@ -240,7 +257,6 @@ public class PlayerCtrl : MonoBehaviour
 
         collisionFlagsCharacter = controllerCharacter.Move(moveAmount);
 
-
     }
 
 
@@ -281,22 +297,27 @@ public class PlayerCtrl : MonoBehaviour
 
         labelStyle.normal.textColor = Color.white;
 
-        GUILayout.Label("HP : " + HP.ToString(), labelStyle);
+        GUILayout.Label("HP : " + hp.ToString(), labelStyle);
 
         GUILayout.Label("STRENGTH : " + strength.ToString(), labelStyle);
+
+        GUILayout.Label("COIN : " + coin.ToString(), labelStyle);
+
+        GUILayout.Label("SPEED : " + speed.ToString(), labelStyle);
+
+        //if()
 
         if (controllerCharacter != null && controllerCharacter.velocity != Vector3.zero)
         {
             //캐릭터 현재 속도
             float _getVelocitySpd = getNowVelocityVal();
-            GUILayout.Label("현재속도 : " + _getVelocitySpd.ToString(), labelStyle);
+            //GUILayout.Label("현재속도 : " + _getVelocitySpd.ToString(), labelStyle);
 
-            //현재 캐릭터 방향 + 크기
-            GUILayout.Label("현재벡터 : " + controllerCharacter.velocity.ToString(), labelStyle);
+            ////현재 캐릭터 방향 + 크기
+            //GUILayout.Label("현재벡터 : " + controllerCharacter.velocity.ToString(), labelStyle);
 
-            //현재  재백터 크기 속도
-            GUILayout.Label("현재백터 크기 속도 : " + vecNowVelocity.magnitude.ToString(), labelStyle);
-
+            ////현재  재백터 크기 속도
+            //GUILayout.Label("현재백터 크기 속도 : " + vecNowVelocity.magnitude.ToString(), labelStyle);
         }
     }
     /// <summary>
@@ -316,7 +337,6 @@ public class PlayerCtrl : MonoBehaviour
 
         }
     }
-
 
     /// <summary>
     ///  애니메이션 재생시켜주는 함수
@@ -378,10 +398,11 @@ public class PlayerCtrl : MonoBehaviour
                 break;
             case PlayerState.Walk:
                 //2.0 걷기 max 속도
-                if (nowSpd > 2.0f)
+                if (Input.GetKeyDown(KeyCode.LeftShift))
                 {
                     playerState = PlayerState.Run;
                 }
+
                 else if (nowSpd < 0.01f)
                 {
                     playerState = PlayerState.Idle;
@@ -474,7 +495,6 @@ public class PlayerCtrl : MonoBehaviour
         }
     }
 
-
     //스킬 애니메이션 재생이 끝났을 때 이벤트 
     void OnSkillAnimFinished()
     {
@@ -502,8 +522,6 @@ public class PlayerCtrl : MonoBehaviour
             //fight 초기화
             flagNextAttack = false;
 
-            Debug.Log(playerAttackState);
-
             //현재 공격 애니매이션 상태에 따른 다음 애니매이션 상태값을 넣기
             switch (playerAttackState)
             {
@@ -511,7 +529,6 @@ public class PlayerCtrl : MonoBehaviour
                 case PlayerAttackState.atkStep_1:
                     playerAttackState = PlayerAttackState.atkStep_2;
 
-                    Debug.Log(playerAttackState);
                     break;
                 case PlayerAttackState.atkStep_2:
                     playerAttackState = PlayerAttackState.atkStep_3;
@@ -619,7 +636,7 @@ public class PlayerCtrl : MonoBehaviour
         if (Physics.Raycast(transform.position, transform.forward, out raycast, 5f, layer))
         {
             BoxOpenText.gameObject.SetActive(true);
-            if (coin >= 35)
+            if (coin >= 25)
             {
                 if (Input.GetKeyDown(KeyCode.F))
                 {
@@ -627,32 +644,11 @@ public class PlayerCtrl : MonoBehaviour
                 }
             }
         }
+
         else
         {
             BoxOpenText.gameObject.SetActive(false);
         }
-        //Collider[] cols = Physics.OverlapSphere(transform.position, 2.2f);
-        //if (cols.Length != 0)
-        //{
-        //    foreach(var col in cols)
-        //    {
-        //        if(col.CompareTag("Box"))
-        //        {
-        //            BoxOpenText.gameObject.SetActive(true);
-        //            if(coin >= 35)
-        //            {
-        //                if (Input.GetKey(KeyCode.F))
-        //                {
-        //                    BoxOpen(col.transform);
-        //                }
-        //            }
-        //        }
-        //        else
-        //        {
-        //            BoxOpenText.gameObject.SetActive(false);
-        //        }
-        //    }
-        //}
     }
 
     /// <summary>
@@ -663,11 +659,11 @@ public class PlayerCtrl : MonoBehaviour
     {
         if(other.gameObject.CompareTag("EnemyAtk") == true)
         {
-            HP -= 5;
-            if(HP > 0)
+            hp -= 3;
+            if(hp > 0)
             {
                 //playerState = PlayerState.Hit;
-                Debug.Log(HP);
+                Debug.Log(hp);
             }
             else
             {
@@ -677,12 +673,6 @@ public class PlayerCtrl : MonoBehaviour
             }
         }
     }
-
-    //private void OnDrawGizmos()
-    //{
-    //    Gizmos.color = Color.red;
-    //    Gizmos.DrawWireSphere(transform.position, 3f);
-    //}
 
     /// <summary>
     /// 박스가 오픈되었을 때 박스에게 Open함수를 실행시키게 한다.
