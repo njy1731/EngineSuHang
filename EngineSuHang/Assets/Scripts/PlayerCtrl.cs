@@ -10,17 +10,12 @@ public class PlayerCtrl : MonoBehaviour
     private LayerMask layer;
 
     //상자에 가까이 가면 뜨게함.
-    [Header("텍스트")]
-    [SerializeField]
-    private Text BoxOpenText = null;
-    [SerializeField]
-    private Text HpText = null;
-    [SerializeField]
-    private Text StrengthText = null;
-    [SerializeField]
-    private Text CoinText = null;
-    [SerializeField]
-    private Text SpeedText = null;
+    [Header("Text")]
+    public Text BoxOpenText = null;
+    public Text HpText = null;
+    public Text StrengthText = null;
+    public Text CoinText = null;
+    public Text SpeedText = null;
 
     //Player HP = 체력
     private int hp = 100;
