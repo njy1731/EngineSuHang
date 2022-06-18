@@ -38,7 +38,7 @@ public class PlayerCtrl : MonoBehaviour
     }
 
     //Player Coin = 재화
-    private int coin = 25;
+    private int coin = 500;
 
     //프로퍼티로 Enemy에서 받기 위함
     public int Coin
