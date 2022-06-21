@@ -11,15 +11,17 @@ public class Shop : MonoBehaviour
 
     public void OnClickShop()
     {
-        UIShop.gameObject.SetActive(true);
-        Time.timeScale = 0;
         isShop = true;
+        UIShop.gameObject.SetActive(true);
+        if(isShop == true)
+        Time.timeScale = 0;
     }
 
     public void OnClickESCButton()
     {
-        UIShop.gameObject.SetActive(false);
-        Time.timeScale = 1;
         isShop = false;
+        UIShop.gameObject.SetActive(false);
+        if(isShop == false)
+        Time.timeScale = 1;
     }
 }

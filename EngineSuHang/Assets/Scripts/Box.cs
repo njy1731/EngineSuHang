@@ -1,13 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.Events;
 
 public class Box : MonoBehaviour
 {
-    private PlayerCtrl player;
     //[ContextMenu("Open")]
+    [Header("Ω∫≈› ¡ı∞°∑Æ")]
     private int BoxCost = 25;
     private int HpPotion = 15;
     private float DumbBell = 2;
@@ -19,33 +18,28 @@ public class Box : MonoBehaviour
 
         if (rd < 3)
         {
-            player.HP += HpPotion;
+            PlayerCtrl.Instance.HP += HpPotion;
             Debug.Log("HP");
 
         }
 
         else if (rd < 6)
         {
-            player.STRENGTH += DumbBell;
+            PlayerCtrl.Instance.STRENGTH += DumbBell;
             Debug.Log("strength");
 
         }
 
         else 
         {
-            player.SPEED += RunningShoes;
+            PlayerCtrl.Instance.SPEED += RunningShoes;
             Debug.Log("speed");
         }
     }
 
-    void Start()
-    {
-        player = FindObjectOfType<PlayerCtrl>();
-    }
-
     public void Open()
     {
-        player.Coin -= BoxCost;
+        PlayerCtrl.Instance.Coin -= BoxCost;
         GetItem();
         Debug.Log("Get Item!");
         GetComponent<Animator>().Play("BoxClip");

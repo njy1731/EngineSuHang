@@ -69,7 +69,7 @@ TrailRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7783658414550167718}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -1008,6 +1008,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b50a01eacab40746a3e32ec0377eb67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  layer:
+    serializedVersion: 2
+    m_Bits: 0
+  BoxOpenText: {fileID: 0}
+  HpText: {fileID: 0}
+  StrengthText: {fileID: 0}
+  CoinText: {fileID: 0}
+  SpeedText: {fileID: 0}
   walkMoveSpd: 5
   runMoveSpd: 10
   rotateMoveSpd: 150

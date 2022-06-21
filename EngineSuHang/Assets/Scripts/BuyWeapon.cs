@@ -32,7 +32,6 @@ public class BuyWeapon : MonoBehaviour
     [Header("Default")]
     [SerializeField]
     private GameObject Obj;
-    private PlayerCtrl player;
 
     [Header("무기 공격력")]
     private int DaggerDMG = 8;
@@ -55,19 +54,15 @@ public class BuyWeapon : MonoBehaviour
     private bool isTomahawk = false;
     private bool isZweihander = false;
 
-    void Start()
-    {
-        player = Obj.GetComponent<PlayerCtrl>();
-    }
 
     public void OnDagger()
     {
         if (isDagger == false)
         {
-            if (player.Coin >= DaggerPrice)
+            if (PlayerCtrl.Instance.Coin >= DaggerPrice)
             {
-                player.STRENGTH += DaggerDMG;
-                player.Coin -= DaggerPrice;
+                PlayerCtrl.Instance.STRENGTH += DaggerDMG;
+                PlayerCtrl.Instance.Coin -= DaggerPrice;
                 isDagger = true;
             }
         }
@@ -83,10 +78,10 @@ public class BuyWeapon : MonoBehaviour
     {
         if (isKatana == false)
         {
-            if (player.Coin >= KatanaPrice)
+            if (PlayerCtrl.Instance.Coin >= KatanaPrice)
             {
-                player.STRENGTH += KatanaDMG;
-                player.Coin -= KatanaPrice;
+                PlayerCtrl.Instance.STRENGTH += KatanaDMG;
+                PlayerCtrl.Instance.Coin -= KatanaPrice;
                 isKatana = true;
             }
         }
@@ -102,10 +97,10 @@ public class BuyWeapon : MonoBehaviour
     {
         if (isGreatSword == false)
         {
-            if (player.Coin >= GreatSwordPrice)
+            if (PlayerCtrl.Instance.Coin >= GreatSwordPrice)
             {
-                player.STRENGTH += GreatSwordDMG;
-                player.Coin -= GreatSwordPrice;
+                PlayerCtrl.Instance.STRENGTH += GreatSwordDMG;
+                PlayerCtrl.Instance.Coin -= GreatSwordPrice;
                 isGreatSword = true;
             }
         }
@@ -121,10 +116,10 @@ public class BuyWeapon : MonoBehaviour
     {
         if (isTomahawk == false)
         {
-            if (player.Coin >= TomahawkPrice)
+            if (PlayerCtrl.Instance.Coin >= TomahawkPrice)
             {
-                player.STRENGTH += TomahawkDMG;
-                player.Coin -= TomahawkPrice;
+                PlayerCtrl.Instance.STRENGTH += TomahawkDMG;
+                PlayerCtrl.Instance.Coin -= TomahawkPrice;
                 isTomahawk = true;
             }
         }
@@ -140,10 +135,10 @@ public class BuyWeapon : MonoBehaviour
     {
         if (isZweihander == false)
         {
-            if (player.Coin >= ZweihanderPrice)
+            if (PlayerCtrl.Instance.Coin >= ZweihanderPrice)
             {
-                player.STRENGTH += ZweihanderDMG;
-                player.Coin -= ZweihanderPrice;
+                PlayerCtrl.Instance.STRENGTH += ZweihanderDMG;
+                PlayerCtrl.Instance.Coin -= ZweihanderPrice;
                 isZweihander = true;
             }
         }

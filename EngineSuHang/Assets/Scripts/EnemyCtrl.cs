@@ -93,8 +93,6 @@ public class EnemyCtrl : MonoBehaviour
 
     void Start()
     {
-        
-
         //처음 상태 대기상태
         enemyState = EnemyState.Idle;
 
@@ -340,7 +338,6 @@ public class EnemyCtrl : MonoBehaviour
         }
     }
 
-
     /// <summary>
     /// 해골 피격 충돌 검출 
     /// </summary>
@@ -353,7 +350,7 @@ public class EnemyCtrl : MonoBehaviour
             PlayerCtrl player = targetCharactor.GetComponent<PlayerCtrl>();
 
             //해골 체력을 10 빼고
-            hp -= 10 + (int)player.STRENGTH;
+            hp -= 10 + (int)player.STRENGTH/2;
             if (hp >= 0)
             {
                 //피격 이펙트 

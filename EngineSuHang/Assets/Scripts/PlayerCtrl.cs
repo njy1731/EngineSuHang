@@ -5,12 +5,14 @@ using UnityEngine.UI;
 
 public class PlayerCtrl : MonoBehaviour
 {
+    //플레이어를 다른 스크립트에서 받기 위함
+    public static PlayerCtrl Instance;
     //상자만 열게 하기 위해서 layerMask
     [SerializeField]
     private LayerMask layer;
 
     //상자에 가까이 가면 뜨게함.
-    [Header("Text")]
+    [Header("UI텍스트")]
     public Text BoxOpenText = null;
     public Text HpText = null;
     public Text StrengthText = null;
@@ -135,6 +137,7 @@ public class PlayerCtrl : MonoBehaviour
 
     void Start()
     {
+        Instance = this;
 
         //CharacterController 캐싱
         controllerCharacter = GetComponent<CharacterController>();
@@ -315,6 +318,7 @@ public class PlayerCtrl : MonoBehaviour
             //GUILayout.Label("현재백터 크기 속도 : " + vecNowVelocity.magnitude.ToString(), labelStyle);
         }
     }
+
     /// <summary>
     /// 캐릭터 몸통 벡터 방향 함수
     /// </summary>
