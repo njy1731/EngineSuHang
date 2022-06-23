@@ -10,6 +10,11 @@ TagManager:
   - Enemy
   - Box
   - EnemyAtk
+  - Dagger
+  - Katana
+  - GreatSword
+  - Tomahawk
+  - Zweihander
   layers:
   - Default
   - TransparentFX

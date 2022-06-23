@@ -20,7 +20,6 @@ public class Box : MonoBehaviour
         {
             PlayerCtrl.Instance.HP += HpPotion;
             Debug.Log("HP");
-
         }
 
         else if (rd < 6)

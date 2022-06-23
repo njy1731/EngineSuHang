@@ -11,7 +11,7 @@ public class BoxSpawn : MonoBehaviour
     [SerializeField]
     private int maxCnt = 50;
 
-    float randomPos = 500f;
+    float randomPos = 125f;
 
     void Spawn()
     {
@@ -31,7 +31,6 @@ public class BoxSpawn : MonoBehaviour
         GameObject newBox = Instantiate(BoxSpawner, boxSpawnPoint, Quaternion.identity);
 
         boxs.Add(newBox);
-
     }
 
     void Start()

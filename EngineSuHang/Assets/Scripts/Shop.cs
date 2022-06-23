@@ -12,6 +12,9 @@ public class Shop : MonoBehaviour
     public void OnClickShop()
     {
         isShop = true;
+        //PlayerCtrl.Instance.HpText.gameObject.SetActive(false);
+        //PlayerCtrl.Instance.StrengthText.gameObject.SetActive(false);
+        //PlayerCtrl.Instance.SpeedText.gameObject.SetActive(false);
         UIShop.gameObject.SetActive(true);
         if(isShop == true)
         Time.timeScale = 0;
@@ -20,6 +23,9 @@ public class Shop : MonoBehaviour
     public void OnClickESCButton()
     {
         isShop = false;
+        //PlayerCtrl.Instance.HpText.gameObject.SetActive(true);
+        //PlayerCtrl.Instance.StrengthText.gameObject.SetActive(true);
+        //PlayerCtrl.Instance.SpeedText.gameObject.SetActive(true);
         UIShop.gameObject.SetActive(false);
         if(isShop == false)
         Time.timeScale = 1;

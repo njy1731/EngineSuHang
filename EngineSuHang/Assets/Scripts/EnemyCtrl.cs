@@ -5,6 +5,7 @@ using Holoville.HOTween;
 
 public class EnemyCtrl : MonoBehaviour
 {
+    public static EnemyCtrl EInstance;
     //적 상태
     public enum EnemyState { None, Idle, Move, Wait, GoTarget, Atk, Damage, Die }
 
@@ -93,6 +94,8 @@ public class EnemyCtrl : MonoBehaviour
 
     void Start()
     {
+        EInstance = this;
+        
         //처음 상태 대기상태
         enemyState = EnemyState.Idle;
 
@@ -327,6 +330,8 @@ public class EnemyCtrl : MonoBehaviour
     /// </summary>
     void setAtk()
     {
+        if (PlayerCtrl.Instance.HP <= 0)
+            return;
         //해골과 캐릭터간의 위치 거리 
         float distance = Vector3.Distance(targetTransform.position, EnemyTransform.position); //무겁다
 
@@ -370,6 +375,11 @@ public class EnemyCtrl : MonoBehaviour
                 Destroy(gameObject);
             }
         }
+    }
+
+    public void PlayerDie()
+    {
+        enemyState = EnemyState.Idle;
     }
 
     /// <summary>

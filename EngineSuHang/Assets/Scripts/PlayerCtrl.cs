@@ -10,6 +10,10 @@ public class PlayerCtrl : MonoBehaviour
     //상자만 열게 하기 위해서 layerMask
     [SerializeField]
     private LayerMask layer;
+    [SerializeField]
+    private GameObject Player;
+    [SerializeField]
+    private GameObject StateUIBackGround = null;
 
     //상자에 가까이 가면 뜨게함.
     [Header("UI텍스트")]
@@ -18,6 +22,9 @@ public class PlayerCtrl : MonoBehaviour
     public Text StrengthText = null;
     public Text CoinText = null;
     public Text SpeedText = null;
+
+    public Button ShopButton = null;
+    public GameObject DieUI = null;
 
     //Player HP = 체력
     private int hp = 100;
@@ -137,6 +144,7 @@ public class PlayerCtrl : MonoBehaviour
 
     void Start()
     {
+
         Instance = this;
 
         //CharacterController 캐싱
@@ -173,10 +181,10 @@ public class PlayerCtrl : MonoBehaviour
 
     void Update()
     {
-        HpText.text = string.Format("HP : {0:N0}", hp);
-        StrengthText.text = string.Format("Strength : {0:N0}", strength);
         CoinText.text = string.Format("Coin : {0:N0}", coin);
-        SpeedText.text = string.Format("Speed : {0}", speed);
+        HpText.text = string.Format("HP : {0:N0}", hp);
+        StrengthText.text = string.Format("Str : {0:N0}", strength);
+        SpeedText.text = string.Format("Spd : {0}", speed);
 
         //캐릭터 이동 
         Move();
@@ -287,37 +295,35 @@ public class PlayerCtrl : MonoBehaviour
     /// <summary>
 	/// GUI SKin
 	/// </summary>
-    private void OnGUI()
-    {
-        var labelStyle = new GUIStyle();
+    //private void OnGUI()
+    //{
+    //    var labelStyle = new GUIStyle();
 
-        labelStyle.fontSize = 35;
+    //    labelStyle.normal.textColor = Color.white;
 
-        labelStyle.normal.textColor = Color.white;
+    //    GUILayout.Label("HP : " + hp.ToString(), labelStyle);
 
-        GUILayout.Label("HP : " + hp.ToString(), labelStyle);
+    //    GUILayout.Label("STRENGTH : " + strength.ToString(), labelStyle);
 
-        GUILayout.Label("STRENGTH : " + strength.ToString(), labelStyle);
+    //    GUILayout.Label("COIN : " + coin.ToString(), labelStyle);
 
-        GUILayout.Label("COIN : " + coin.ToString(), labelStyle);
+    //    GUILayout.Label("SPEED : " + speed.ToString(), labelStyle);
 
-        GUILayout.Label("SPEED : " + speed.ToString(), labelStyle);
+    //    //if()
 
-        //if()
+    //    if (controllerCharacter != null && controllerCharacter.velocity != Vector3.zero)
+    //    {
+    //        //캐릭터 현재 속도
+    //        float _getVelocitySpd = getNowVelocityVal();
+    //        //GUILayout.Label("현재속도 : " + _getVelocitySpd.ToString(), labelStyle);
 
-        if (controllerCharacter != null && controllerCharacter.velocity != Vector3.zero)
-        {
-            //캐릭터 현재 속도
-            float _getVelocitySpd = getNowVelocityVal();
-            //GUILayout.Label("현재속도 : " + _getVelocitySpd.ToString(), labelStyle);
+    //        ////현재 캐릭터 방향 + 크기
+    //        //GUILayout.Label("현재벡터 : " + controllerCharacter.velocity.ToString(), labelStyle);
 
-            ////현재 캐릭터 방향 + 크기
-            //GUILayout.Label("현재벡터 : " + controllerCharacter.velocity.ToString(), labelStyle);
-
-            ////현재  재백터 크기 속도
-            //GUILayout.Label("현재백터 크기 속도 : " + vecNowVelocity.magnitude.ToString(), labelStyle);
-        }
-    }
+    //        ////현재  재백터 크기 속도
+    //        //GUILayout.Label("현재백터 크기 속도 : " + vecNowVelocity.magnitude.ToString(), labelStyle);
+    //    }
+    //}
 
     /// <summary>
     /// 캐릭터 몸통 벡터 방향 함수
@@ -625,7 +631,27 @@ public class PlayerCtrl : MonoBehaviour
                 break;
         }
     }
-    
+
+    void Die()
+    {
+        if (hp <= 0)
+        {
+            Time.timeScale = 0;
+            StateUIBackGround.gameObject.SetActive(false);
+            OnClickReStart();
+        }
+    }
+
+    void OnClickReStart()
+    {
+        DieUI.gameObject.SetActive(true);
+    }
+
+    void SpawnBox()
+    {
+
+    }
+
     /// <summary>
     /// 플레이어의 범위내에 박스가 있을때 돈이 있을때 열게 하는 함수
     /// </summary>
@@ -658,15 +684,18 @@ public class PlayerCtrl : MonoBehaviour
     {
         if(other.gameObject.CompareTag("EnemyAtk") == true)
         {
-            hp -= 3;
+            hp -= 4;
             if(hp > 0)
             {
                 //playerState = PlayerState.Hit;
                 Debug.Log(hp);
             }
+
             else
             {
                 Debug.Log("Die");
+                PlayerDied(EnemyCtrl.EInstance.transform);
+                Die();
                 Destroy(gameObject);
                 ///playerState = PlayerState.Die;
             }
@@ -680,5 +709,10 @@ public class PlayerCtrl : MonoBehaviour
     void BoxOpen(Transform box)
     {
         box.SendMessage("Open", SendMessageOptions.RequireReceiver);
+    }
+
+    void PlayerDied(Transform Enemy)
+    {
+        Enemy.SendMessage("PlayerDie", SendMessageOptions.RequireReceiver);
     }
 }
