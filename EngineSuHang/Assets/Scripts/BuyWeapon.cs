@@ -6,7 +6,6 @@ using UnityEngine.EventSystems;
 
 public class BuyWeapon : MonoBehaviour
 {
-
     [Header("무기 구매 버튼")]
     [SerializeField]
     private Button daggerButton;
@@ -62,141 +61,20 @@ public class BuyWeapon : MonoBehaviour
     private bool isGreatSword = false;
     private bool isTomahawk = false;
     private bool isZweihander = false;
-    private bool isPurchase = false;
-    private bool isExit = false;
-
-    public Image Purchase = null;
-
-    public void OnPurchase()
-    {
-        if (isDagger)
-        {
-            if (PlayerCtrl.Instance.Coin >= DaggerPrice)
-            {
-                Purchase.gameObject.SetActive(false);
-                PlayerCtrl.Instance.STRENGTH += DaggerDMG;
-                PlayerCtrl.Instance.SPEED += DaggerStat;
-                PlayerCtrl.Instance.Coin -= DaggerPrice;
-                katanaButton.interactable = true;
-                greatswordButton.interactable = true;
-                tomahawkButton.interactable = true;
-                zweihanderButton.interactable = true;
-                isDagger = true;
-            }
-        }
-
-        if (isKatana)
-        {
-            if (PlayerCtrl.Instance.Coin >= KatanaPrice)
-            {
-                Purchase.gameObject.SetActive(false);
-                PlayerCtrl.Instance.STRENGTH += KatanaDMG;
-                PlayerCtrl.Instance.HP += KatanaStat;
-                PlayerCtrl.Instance.Coin -= KatanaPrice;
-                daggerButton.interactable = true;
-                greatswordButton.interactable = true;
-                tomahawkButton.interactable = true;
-                zweihanderButton.interactable = true;
-                isKatana = true;
-            }
-        }
-
-        if (isGreatSword)
-        {
-            if (PlayerCtrl.Instance.Coin >= GreatSwordPrice)
-            {
-                Purchase.gameObject.SetActive(false);
-                PlayerCtrl.Instance.STRENGTH += GreatSwordDMG;
-                PlayerCtrl.Instance.Coin -= GreatSwordPrice;
-                daggerButton.interactable = true;
-                katanaButton.interactable = true;
-                tomahawkButton.interactable = true;
-                zweihanderButton.interactable = true;
-                isGreatSword = true;
-            }
-        }
-
-        if (isTomahawk)
-        {
-            if (PlayerCtrl.Instance.Coin >= TomahawkPrice)
-            {
-                Purchase.gameObject.SetActive(false);
-                PlayerCtrl.Instance.STRENGTH += TomahawkDMG;
-                PlayerCtrl.Instance.HP += TomahawkStat1;
-                PlayerCtrl.Instance.SPEED += TomahawkStat2;
-                PlayerCtrl.Instance.Coin -= TomahawkPrice;
-                daggerButton.interactable = true;
-                katanaButton.interactable = true;
-                greatswordButton.interactable = true;
-                zweihanderButton.interactable = true;
-                isTomahawk = true;
-            }
-        }
-
-        if (isZweihander)
-        {
-            if (PlayerCtrl.Instance.Coin >= ZweihanderPrice)
-            {
-                Purchase.gameObject.SetActive(false);
-                PlayerCtrl.Instance.STRENGTH += ZweihanderDMG;
-                PlayerCtrl.Instance.HP += ZweihanderStat;
-                PlayerCtrl.Instance.Coin -= ZweihanderPrice;
-                daggerButton.interactable = true;
-                katanaButton.interactable = true;
-                greatswordButton.interactable = true;
-                tomahawkButton.interactable = true;
-                isZweihander = true;
-            }
-        }
-    }
-
-    public void OnExitButton()
-    {
-        Purchase.gameObject.SetActive(false);
-        isPurchase = false;
-        if (isDagger)
-        {
-            isDagger = false;
-        }
-        if (isKatana)
-        {
-            isKatana = false;
-        }
-        if (isGreatSword)
-        {
-            isGreatSword = false;
-        }
-        if (isTomahawk)
-        {
-            isTomahawk = false;
-        }
-        if (isZweihander)
-        {
-            isZweihander = false;
-        }
-    }
     
     public void OnDagger()
     {
         if (isDagger == false)
         {
-            katanaButton.interactable = false;
-            greatswordButton.interactable = false;
-            tomahawkButton.interactable = false;
-            zweihanderButton.interactable = false;
             if (PlayerCtrl.Instance.Coin >= DaggerPrice)
             {
-                Purchase.gameObject.SetActive(true);
-                isPurchase = true;
+                daggerText.text = string.Format("Sold");
+                PlayerCtrl.Instance.STRENGTH += DaggerDMG;
+                PlayerCtrl.Instance.SPEED += DaggerStat;
+                PlayerCtrl.Instance.Coin -= DaggerPrice;
+                daggerButton.interactable = false;
                 isDagger = true;
             }
-            
-        }
-
-        else if (isDagger == true)
-        {
-            daggerButton.interactable = false;
-            daggerText.text = string.Format("Sold");
         }
     }
 
@@ -204,22 +82,15 @@ public class BuyWeapon : MonoBehaviour
     {
         if (isKatana == false)
         {
-            daggerButton.interactable = false;
-            greatswordButton.interactable = false;
-            tomahawkButton.interactable = false;
-            zweihanderButton.interactable = false;
             if (PlayerCtrl.Instance.Coin >= KatanaPrice)
             {
-                Purchase.gameObject.SetActive(true);
-                isPurchase = true;
+                katanaText.text = string.Format("Sold");
+                PlayerCtrl.Instance.STRENGTH += KatanaDMG;
+                PlayerCtrl.Instance.HP += KatanaStat;
+                PlayerCtrl.Instance.Coin -= KatanaPrice;
+                katanaButton.interactable = false;
                 isKatana = true;
             }
-        }
-
-        else
-        {
-            katanaButton.interactable = false;
-            katanaText.text = string.Format("Sold");
         }
     }
 
@@ -227,22 +98,14 @@ public class BuyWeapon : MonoBehaviour
     {
         if (isGreatSword == false)
         {
-            daggerButton.interactable = false;
-            katanaButton.interactable = false;
-            tomahawkButton.interactable = false;
-            zweihanderButton.interactable = false;
             if (PlayerCtrl.Instance.Coin >= GreatSwordPrice)
             {
-                Purchase.gameObject.SetActive(true);
-                isPurchase = true;
+                greatswordText.text = string.Format("Sold");
+                PlayerCtrl.Instance.STRENGTH += GreatSwordDMG;
+                PlayerCtrl.Instance.Coin -= GreatSwordPrice;
+                greatswordButton.interactable = false;
                 isGreatSword = true;
             }
-        }
-
-        else
-        {
-            greatswordButton.interactable = false;
-            greatswordText.text = string.Format("Sold");
         }
     }
 
@@ -250,22 +113,16 @@ public class BuyWeapon : MonoBehaviour
     {
         if (isTomahawk == false)
         {
-            daggerButton.interactable = false;
-            katanaButton.interactable = false;
-            greatswordButton.interactable = false;
-            zweihanderButton.interactable = false;
             if (PlayerCtrl.Instance.Coin >= TomahawkPrice)
             {
-                Purchase.gameObject.SetActive(true);
-                isPurchase = true;
+                tomahawkText.text = string.Format("Sold");
+                PlayerCtrl.Instance.STRENGTH += TomahawkDMG;
+                PlayerCtrl.Instance.HP += TomahawkStat1;
+                PlayerCtrl.Instance.SPEED += TomahawkStat2;
+                PlayerCtrl.Instance.Coin -= TomahawkPrice;
+                tomahawkButton.interactable = false;
                 isTomahawk = true;
             }
-        }
-
-        else
-        {
-            tomahawkButton.interactable = false;
-            tomahawkText.text = string.Format("Sold");
         }
     }
 
@@ -273,22 +130,16 @@ public class BuyWeapon : MonoBehaviour
     {
         if (isZweihander == false)
         {
-            daggerButton.interactable = false;
-            katanaButton.interactable = false;
-            greatswordButton.interactable = false;
-            tomahawkButton.interactable = false;
+            
             if (PlayerCtrl.Instance.Coin >= ZweihanderPrice)
             {
-                Purchase.gameObject.SetActive(true);
-                isPurchase = true;
+                zweihanderText.text = string.Format("Sold");
+                PlayerCtrl.Instance.STRENGTH += ZweihanderDMG;
+                PlayerCtrl.Instance.HP += ZweihanderStat;
+                PlayerCtrl.Instance.Coin -= ZweihanderPrice;
+                zweihanderButton.interactable = false;
                 isZweihander = true;
             }
-        }
-
-        else
-        {
-            zweihanderButton.interactable = false;
-            zweihanderText.text = string.Format("Sold");
         }
     }
 }

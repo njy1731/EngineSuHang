@@ -42,13 +42,14 @@ public class EnemyCtrl : MonoBehaviour
     private int hp = 150;
     //해골 공격 거리
     public float AtkRange = 1.5f;
-    //해골 다이 이펙트
-    public GameObject effectDie = null;
-    public GameObject effectDamage = null;
+
+    public ParticleSystem effect;
 
     [SerializeField]
-    private int enemyCoin = 5;
-    
+    private int enemyCoin = 10;
+
+    private bool isHit = false;
+
 
     //private Tweener effectTweener = null;
     //private SkinnedMeshRenderer skinnedMeshRenderer = null;
@@ -67,9 +68,6 @@ public class EnemyCtrl : MonoBehaviour
     void OnDieAnmationFinished()
     {
         Debug.Log("Die Animation finished");
-
-        //몬스터 죽음 이벤트 
-        Instantiate(effectDie, EnemyTransform.position, Quaternion.identity);
 
         //몬스터 삭제 
         Destroy(gameObject);
@@ -351,21 +349,23 @@ public class EnemyCtrl : MonoBehaviour
     {
         //만약에 해골이 캐릭터 공격에 맞았다면
         if (other.gameObject.CompareTag("PlayerAtk") == true)
-        { 
+        {
+            if (isHit) return;
+
+            isHit = true;
+            Instantiate(effect, transform).transform.position = new Vector3(transform.position.x, 1f, transform.position.z);
             PlayerCtrl player = targetCharactor.GetComponent<PlayerCtrl>();
 
             //해골 체력을 10 빼고
             hp -= 10 + (int)player.STRENGTH/2;
             if (hp >= 0)
             {
-                //피격 이펙트 
-                Instantiate(effectDamage, other.transform.position, Quaternion.identity);
-
                 //체력이 0 이상이면 피격 애니메이션을 연출 하고 
                 //EnemyAnimation.CrossFade(DamageAnimClip.name);
 
                 //피격 트위닝 이펙트
                 //effectDamageTween();
+                isHit = false;
             }
             else
             {

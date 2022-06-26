@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class BoxSpawn : MonoBehaviour
 {
+    public Transform player;
     [SerializeField]
     private GameObject BoxSpawner = null;
     [SerializeField]
@@ -11,7 +12,8 @@ public class BoxSpawn : MonoBehaviour
     [SerializeField]
     private int maxCnt = 50;
 
-    float randomPos = 125f;
+    float randomPos = 125;
+
 
     void Spawn()
     {
@@ -20,7 +22,7 @@ public class BoxSpawn : MonoBehaviour
             return;
         }
         
-        Vector3 boxSpawnPoint = new Vector3(Random.Range(-randomPos, randomPos), 1000f, Random.Range(-randomPos, randomPos));
+        Vector3 boxSpawnPoint = new Vector3(Random.Range((player.transform.position.x - randomPos), player.transform.position.x + randomPos), 1000f, Random.Range((player.transform.position.z - randomPos), player.transform.position.z + randomPos));
         Ray ray = new Ray(boxSpawnPoint, Vector3.down);
         RaycastHit raycastHit = new RaycastHit();
         if(Physics.Raycast(ray, out raycastHit, Mathf.Infinity) == true)
@@ -35,6 +37,7 @@ public class BoxSpawn : MonoBehaviour
 
     void Start()
     {
-        InvokeRepeating("Spawn", 2f, 5f);
+        player = PlayerCtrl.Instance.transform;
+        InvokeRepeating("Spawn", 2f, 1.5f);
     }
 }

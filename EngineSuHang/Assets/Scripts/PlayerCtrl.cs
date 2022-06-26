@@ -9,20 +9,22 @@ public class PlayerCtrl : MonoBehaviour
     public static PlayerCtrl Instance;
     //상자만 열게 하기 위해서 layerMask
     [SerializeField]
-    private LayerMask layer;
+    private LayerMask boxLayer;
+    [SerializeField]
+    private LayerMask tombLayer;
     [SerializeField]
     private GameObject Player;
     [SerializeField]
     private GameObject StateUIBackGround = null;
 
     //상자에 가까이 가면 뜨게함.
-    [Header("UI텍스트")]
+    [Header("UI")]
     public Text BoxOpenText = null;
     public Text HpText = null;
     public Text StrengthText = null;
     public Text CoinText = null;
     public Text SpeedText = null;
-
+    public Text BossSpawnText = null;
     public Button ShopButton = null;
     public GameObject DieUI = null;
 
@@ -64,6 +66,8 @@ public class PlayerCtrl : MonoBehaviour
         get => speed;
         set => speed = value;
     }
+
+    [Header("플레이어 기본 속성")]
     public float walkMoveSpd = 2.0f;
 
     //캐릭터 직선 이동 속도 (달리기)
@@ -138,15 +142,16 @@ public class PlayerCtrl : MonoBehaviour
 
 
     [Header("스킬관련")]
-    public AnimationClip skillAnimClip = null;
+    public ParticleSystem effect;
     public GameObject skillEffect = null;
 
+    void Awake()
+    {
+        Instance = this;
+    }
 
     void Start()
     {
-
-        Instance = this;
-
         //CharacterController 캐싱
         controllerCharacter = GetComponent<CharacterController>();
 
@@ -168,7 +173,6 @@ public class PlayerCtrl : MonoBehaviour
         animationPlayer[animationClipAtkStep_2.name].wrapMode = WrapMode.Once;
         animationPlayer[animationClipAtkStep_3.name].wrapMode = WrapMode.Once;
         animationPlayer[animationClipAtkStep_4.name].wrapMode = WrapMode.Once;
-        animationPlayer[skillAnimClip.name].wrapMode = WrapMode.Once;
 
         //이벤트 함수 지정 
         SetAnimationEvent(animationClipAtkStep_1, "OnPlayerAttackFinshed");
@@ -176,7 +180,6 @@ public class PlayerCtrl : MonoBehaviour
         SetAnimationEvent(animationClipAtkStep_3, "OnPlayerAttackFinshed");
         SetAnimationEvent(animationClipAtkStep_4, "OnPlayerAttackFinshed");
 
-        SetAnimationEvent(skillAnimClip, "OnSkillAnimFinished");
     }
 
     void Update()
@@ -208,6 +211,8 @@ public class PlayerCtrl : MonoBehaviour
         AtkComponentCtrl();
 
         CheckBox();
+
+        CheckTomb();
     }
 
     /// <summary>
@@ -377,10 +382,6 @@ public class PlayerCtrl : MonoBehaviour
                 //공격상태에 맞춘 애니메이션을 재생
                 AtkAnimationCrtl();
                 break;
-            case PlayerState.Skill:
-                playAnimationByClip(skillAnimClip);
-                stopMove = true;
-                break;
         }
     }
 
@@ -498,22 +499,6 @@ public class PlayerCtrl : MonoBehaviour
             //플레이어 상태를 스킬 상태로 변경 한다
             playerState = PlayerState.Skill;
         }
-    }
-
-    //스킬 애니메이션 재생이 끝났을 때 이벤트 
-    void OnSkillAnimFinished()
-    {
-        //현재 캐릭터 위치 저장
-        Vector3 pos = transform.position;
-
-        //캐릭터 앞 방향 2.0정도 떨어진 거리 
-        pos += transform.forward * 2f;
-
-        //그 위치에 스킬 이펙트를 붙인다. 
-        Instantiate(skillEffect, pos, Quaternion.identity);
-
-        //끝났으면 대기 상태로 둔다. 
-        playerState = PlayerState.Idle;
     }
 
     /// <summary>
@@ -647,18 +632,13 @@ public class PlayerCtrl : MonoBehaviour
         DieUI.gameObject.SetActive(true);
     }
 
-    void SpawnBox()
-    {
-
-    }
-
     /// <summary>
     /// 플레이어의 범위내에 박스가 있을때 돈이 있을때 열게 하는 함수
     /// </summary>
     void CheckBox()
     {
         RaycastHit raycast;
-        if (Physics.Raycast(transform.position, transform.forward, out raycast, 5f, layer))
+        if (Physics.Raycast(transform.position, transform.forward, out raycast, 4f, boxLayer))
         {
             BoxOpenText.gameObject.SetActive(true);
             if (coin >= 25)
@@ -676,6 +656,24 @@ public class PlayerCtrl : MonoBehaviour
         }
     }
 
+    void CheckTomb()
+    {
+        RaycastHit raycast;
+        if (Physics.Raycast(transform.position, transform.forward, out raycast, 4f, tombLayer))
+        {
+            BossSpawnText.gameObject.SetActive(true);
+            if (Input.GetKeyDown(KeyCode.F))
+            {
+                BossSpawn(raycast.transform);
+            }
+        }
+
+        else
+        {
+            BossSpawnText.gameObject.SetActive(false);
+        }
+    }
+
     /// <summary>
     /// 플레이어 피격 충돌 검출 
     /// </summary>
@@ -688,15 +686,30 @@ public class PlayerCtrl : MonoBehaviour
             if(hp > 0)
             {
                 //playerState = PlayerState.Hit;
-                Debug.Log(hp);
             }
 
             else
             {
-                Debug.Log("Die");
                 PlayerDied(EnemyCtrl.EInstance.transform);
                 Die();
-                Destroy(gameObject);
+                //Destroy(gameObject);
+                ///playerState = PlayerState.Die;
+            }
+        }
+
+        if(other.gameObject.CompareTag("BossAtk") == true)
+        {
+            hp -= 10;
+            if (hp > 0)
+            {
+                //playerState = PlayerState.Hit;
+            }
+
+            else
+            {
+                PlayerDied(EnemyCtrl.EInstance.transform);
+                Die();
+                //Destroy(gameObject);
                 ///playerState = PlayerState.Die;
             }
         }
@@ -709,6 +722,11 @@ public class PlayerCtrl : MonoBehaviour
     void BoxOpen(Transform box)
     {
         box.SendMessage("Open", SendMessageOptions.RequireReceiver);
+    }
+
+    void BossSpawn(Transform tomb)
+    {
+        tomb.SendMessage("BossSpawn", SendMessageOptions.RequireReceiver);
     }
 
     void PlayerDied(Transform Enemy)
