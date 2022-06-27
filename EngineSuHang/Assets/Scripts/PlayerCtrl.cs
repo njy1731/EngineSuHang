@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class PlayerCtrl : MonoBehaviour
 {
+    public Slider PlayerHPBar = null;
+
     //플레이어를 다른 스크립트에서 받기 위함
     public static PlayerCtrl Instance;
     //상자만 열게 하기 위해서 layerMask
@@ -30,6 +32,7 @@ public class PlayerCtrl : MonoBehaviour
 
     //Player HP = 체력
     private int hp = 100;
+    private int maxHp = 100;
 
     //프로퍼티로 Enemy에서 받기 위함
     public int HP
@@ -152,6 +155,10 @@ public class PlayerCtrl : MonoBehaviour
 
     void Start()
     {
+        hp = maxHp;
+
+        UpdateHpBar();
+
         //CharacterController 캐싱
         controllerCharacter = GetComponent<CharacterController>();
 
@@ -213,6 +220,12 @@ public class PlayerCtrl : MonoBehaviour
         CheckBox();
 
         CheckTomb();
+    }
+
+    void UpdateHpBar()
+    {
+        PlayerHPBar.maxValue = maxHp;
+        PlayerHPBar.value = hp;
     }
 
     /// <summary>
@@ -623,6 +636,7 @@ public class PlayerCtrl : MonoBehaviour
         {
             Time.timeScale = 0;
             StateUIBackGround.gameObject.SetActive(false);
+            ShopButton.gameObject.SetActive(false);
             OnClickReStart();
         }
     }
@@ -683,6 +697,7 @@ public class PlayerCtrl : MonoBehaviour
         if(other.gameObject.CompareTag("EnemyAtk") == true)
         {
             hp -= 4;
+            UpdateHpBar();
             if(hp > 0)
             {
                 //playerState = PlayerState.Hit;
@@ -700,6 +715,7 @@ public class PlayerCtrl : MonoBehaviour
         if(other.gameObject.CompareTag("BossAtk") == true)
         {
             hp -= 10;
+            UpdateHpBar();
             if (hp > 0)
             {
                 //playerState = PlayerState.Hit;

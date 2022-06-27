@@ -1,10 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Holoville.HOTween;
 
 public class EnemyCtrl : MonoBehaviour
 {
+    public Slider hpBar = null;
+
     public static EnemyCtrl EInstance;
     //적 상태
     public enum EnemyState { None, Idle, Move, Wait, GoTarget, Atk, Damage, Die }
@@ -40,6 +43,7 @@ public class EnemyCtrl : MonoBehaviour
     //해골 체력
     [SerializeField]
     private int hp = 150;
+    private int maxHp = 150;
     //해골 공격 거리
     public float AtkRange = 1.5f;
 
@@ -90,8 +94,18 @@ public class EnemyCtrl : MonoBehaviour
         clip.AddEvent(retEvent);
     }
 
+    void UpdateHP()
+    {
+        hpBar.maxValue = maxHp;
+        hpBar.value = hp;
+    }
+
     void Start()
     {
+        hp = maxHp;
+
+        UpdateHP();
+
         EInstance = this;
         
         //처음 상태 대기상태
@@ -358,6 +372,7 @@ public class EnemyCtrl : MonoBehaviour
 
             //해골 체력을 10 빼고
             hp -= 10 + (int)player.STRENGTH/2;
+            UpdateHP();
             if (hp >= 0)
             {
                 //체력이 0 이상이면 피격 애니메이션을 연출 하고 

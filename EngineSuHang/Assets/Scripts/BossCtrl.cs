@@ -1,10 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Holoville.HOTween;
 
 public class BossCtrl : MonoBehaviour
 {
+    public Slider BossHPBar = null;
+
     public enum BossState { None, Idle, Move, Wait, GoTarget, Atk, Damage, Die }
     [Header("扁夯 加己")]
     public BossState bossState = BossState.None;
@@ -23,6 +26,7 @@ public class BossCtrl : MonoBehaviour
     [Header("傈捧加己")]
     [SerializeField]
     private int hp = 1000;
+    private int maxHp = 1000;
     public float AtkRange = 3f;
 
     public ParticleSystem effect;
@@ -61,8 +65,17 @@ public class BossCtrl : MonoBehaviour
         clip.AddEvent(retEvent);
     }
 
+    void UpdateHPBar()
+    {
+        BossHPBar.maxValue = maxHp;
+        BossHPBar.value = hp;
+    }
+
     void Start()
     {
+        hp = maxHp;
+
+        UpdateHPBar();
 
         bossState = BossState.Idle;
         BossAnimation = GetComponent<Animation>();
@@ -256,6 +269,7 @@ public class BossCtrl : MonoBehaviour
             Instantiate(effect, transform).transform.position = new Vector3(transform.position.x, 2.5f, transform.position.z);
             PlayerCtrl player = targetCharactor.GetComponent<PlayerCtrl>();
 
+            UpdateHPBar();
             hp -= 10 + (int)player.STRENGTH;
             if (hp >= 0)
             {
