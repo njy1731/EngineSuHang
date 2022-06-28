@@ -2,10 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using Holoville.HOTween;
 
 public class EnemyCtrl : MonoBehaviour
 {
+    public GameObject PopUpText;
+
     public Slider hpBar = null;
 
     public static EnemyCtrl EInstance;
@@ -42,8 +43,8 @@ public class EnemyCtrl : MonoBehaviour
     [Header("전투속성")]
     //해골 체력
     [SerializeField]
-    private int hp = 150;
-    private int maxHp = 150;
+    private int hp = 110;
+    private int maxHp = 110;
     //해골 공격 거리
     public float AtkRange = 1.5f;
 
@@ -355,6 +356,14 @@ public class EnemyCtrl : MonoBehaviour
         }
     }
 
+    IEnumerator PopUp()
+    {
+        PopUpText.SetActive(true);
+        yield return new WaitForSeconds(1f);
+        PopUpText.SetActive(false);
+        Destroy(gameObject);
+    }
+
     /// <summary>
     /// 해골 피격 충돌 검출 
     /// </summary>
@@ -382,13 +391,14 @@ public class EnemyCtrl : MonoBehaviour
                 //effectDamageTween();
                 isHit = false;
             }
+
             else
             {
                 //0 보다 작으면 해골이 죽음 상태로 바꾸어라
                 enemyState = EnemyState.Die;
                 player.Coin += enemyCoin;
-                Destroy(gameObject);
-            }
+                StartCoroutine(PopUp());
+            }   
         }
     }
 

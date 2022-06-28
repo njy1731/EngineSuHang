@@ -12,7 +12,7 @@ public class BoxSpawn : MonoBehaviour
     [SerializeField]
     private int maxCnt = 50;
 
-    float randomPos = 125;
+    float randomPos = 90;
 
 
     void Spawn()

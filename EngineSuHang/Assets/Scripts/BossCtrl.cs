@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using Holoville.HOTween;
 
 public class BossCtrl : MonoBehaviour
 {
@@ -25,8 +24,8 @@ public class BossCtrl : MonoBehaviour
 
     [Header("전투속성")]
     [SerializeField]
-    private int hp = 1000;
-    private int maxHp = 1000;
+    private int hp = 850;
+    private int maxHp = 850;
     public float AtkRange = 3f;
 
     public ParticleSystem effect;

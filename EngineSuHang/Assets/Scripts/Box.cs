@@ -5,6 +5,8 @@ using UnityEngine.Events;
 
 public class Box : MonoBehaviour
 {
+    public GameObject PopUPText;
+
     [Header("몬스터 스폰")]
     public GameObject monsterSpawner = null;
     public List<GameObject> monsters = new List<GameObject>();
@@ -18,16 +20,23 @@ public class Box : MonoBehaviour
     private float StrengthItem = 2;
     private float SpeedItem = 0.5f;
 
+    IEnumerator PopUp()
+    {
+        PopUPText.SetActive(true);
+        yield return new WaitForSeconds(1f);
+        PopUPText.SetActive(false);
+    }
+
     void GetBoxOpen()
     {
         int RandomBoxOpened = Random.Range(0, 10);
 
-        if(RandomBoxOpened < 3)
+        if(RandomBoxOpened < 7)
         {
             GetItem();
         }
 
-        else if(RandomBoxOpened < 6)
+        else if(RandomBoxOpened < 9)
         {
             SpawnEnemy();
         }
@@ -42,13 +51,14 @@ public class Box : MonoBehaviour
     {
         int rdITem = Random.Range(0, 10);
 
-        if (rdITem < 2)
+        if (rdITem < 3)
         {
             PlayerCtrl.Instance.HP += HPItem;
+            PlayerCtrl.Instance.UpdateHpBar();
             Debug.Log("HP");
         }
 
-        else if (rdITem < 4)
+        else if (rdITem < 5)
         {
             PlayerCtrl.Instance.STRENGTH += StrengthItem;
             Debug.Log("strength");
@@ -57,6 +67,11 @@ public class Box : MonoBehaviour
 
         else if(rdITem < 8)
         {
+            if(PlayerCtrl.Instance.SPEED == 3f)
+            {
+                PlayerCtrl.Instance.Coin += 5;
+            }
+            if (PlayerCtrl.Instance.SPEED == 3f) return;
             PlayerCtrl.Instance.SPEED += SpeedItem;
             Debug.Log("speed");
         }
@@ -64,6 +79,7 @@ public class Box : MonoBehaviour
         else
         {
             PlayerCtrl.Instance.Coin += 10;
+            StartCoroutine(PopUp());
             Debug.Log("Coin");
         }
     }

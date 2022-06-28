@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class PlayerCtrl : MonoBehaviour
 {
+    public Box box;
     public Slider PlayerHPBar = null;
 
     //플레이어를 다른 스크립트에서 받기 위함
@@ -34,6 +35,12 @@ public class PlayerCtrl : MonoBehaviour
     private int hp = 100;
     private int maxHp = 100;
 
+    public int MaxHP
+    {
+        get => hp;
+        set => hp = value;
+    }
+
     //프로퍼티로 Enemy에서 받기 위함
     public int HP
     {
@@ -42,7 +49,7 @@ public class PlayerCtrl : MonoBehaviour
     }
 
     //Player 공격력 = 힘
-    private float strength = 1.0f;
+    private float strength = 2.0f;
 
     //프로퍼티로 Enemy에서 받기 위함
     public float STRENGTH
@@ -155,6 +162,8 @@ public class PlayerCtrl : MonoBehaviour
 
     void Start()
     {
+        box = GetComponent<Box>();
+       
         hp = maxHp;
 
         UpdateHpBar();
@@ -191,6 +200,7 @@ public class PlayerCtrl : MonoBehaviour
 
     void Update()
     {
+
         CoinText.text = string.Format("Coin : {0:N0}", coin);
         HpText.text = string.Format("HP : {0:N0}", hp);
         StrengthText.text = string.Format("Str : {0:N0}", strength);
@@ -220,12 +230,14 @@ public class PlayerCtrl : MonoBehaviour
         CheckBox();
 
         CheckTomb();
+
     }
 
-    void UpdateHpBar()
+    public void UpdateHpBar()
     {
         PlayerHPBar.maxValue = maxHp;
         PlayerHPBar.value = hp;
+
     }
 
     /// <summary>
